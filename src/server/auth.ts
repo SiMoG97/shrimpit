@@ -8,6 +8,9 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { redirect, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+// import { useRouter } from "next/router";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -37,6 +40,13 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    // async signIn({ account, profile }) {
+    //   if (account.provider === "google") {
+    //     console.log("chi 7aja hna ");
+    //     return profile.email_verified && profile.email.endsWith("@example.com");
+    //   }
+    //   return true; // Do different verification for other providers that don't have `email_verified`
+    // },
     session: ({ session, user }) => ({
       ...session,
       user: {
@@ -51,15 +61,6 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Googlew provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
 };
 
@@ -69,3 +70,17 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
+export async function loginIsRequiredServer() {
+  const session = await getServerAuthSession();
+  console.log(session);
+
+  if (!session) return redirect("/login");
+}
+export function loginIsRequiredClient() {
+  if (typeof window !== "undefined") {
+    const session = useSession();
+    const router = useRouter();
+    if (!session) router.push("/login");
+  }
+}

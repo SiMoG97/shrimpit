@@ -1,6 +1,10 @@
 import "@/styles/globals.css";
+import Navbar from "@/components/Navbar";
 
 import { Inter } from "next/font/google";
+import MainContainer from "@/components/MainContainer";
+// import { SessionProvider } from "next-auth/react";
+// import AuthProvider from "@/components/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,7 +24,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>{children}</body>
+      <body className={`font-sans ${inter.variable}`}>
+        {/* <AuthProvider> */}
+        <Navbar />
+        <MainContainer>{children}</MainContainer>
+        {/* </AuthProvider> */}
+      </body>
     </html>
   );
 }

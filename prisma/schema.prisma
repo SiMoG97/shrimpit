@@ -24,69 +24,63 @@ generator client {
 // }
 
 // Necessary for Next auth
-// model Account {
-//     id                String  @id @default(cuid())
-//     userId            String
-//     type              String
-//     provider          String
-//     providerAccountId String
-//     refresh_token     String? // @db.Text
-//     access_token      String? // @db.Text
-//     expires_at        Int?
-//     token_type        String?
-//     scope             String?
-//     id_token          String? // @db.Text
-//     session_state     String?
-//     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-//     @@unique([provider, providerAccountId])
-//     @@index([userId])
-// }
-
-// model Session {
-//     id           String   @id @default(cuid())
-//     sessionToken String   @unique
-//     userId       String
-//     expires      DateTime
-//     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//     @@index([userId])
-// }
-
-model User {
-    id             String   @id @default(cuid())
-    google_user_id String
-    firstname      String?
-    lastname       String?
-    email          String?  @unique
-    displayName    String?
-    pp_url         String?
-    access_token   String
-    refresh_token  String
-    last_login     DateTime @default(now())
-    Urls           Url[]
-    // accounts       Account[]
-    // sessions       Session[]
-    // Post           Post[]
+    @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
-// model VerificationToken {
-//     identifier String
-//     token      String   @unique
-//     expires    DateTime
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-//     @@unique([identifier, token])
-// }
+    @@index([userId])
+}
+
+model User {
+    id            String    @id @default(cuid())
+    email         String?   @unique
+    emailVerified DateTime?
+    name          String?
+    image         String?
+    urls          Url[]
+    accounts      Account[]
+    sessions      Session[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
 
 model Url {
     id              String   @id @default(cuid())
     original_url    String
-    short_url_key   String
+    short_url_key   String   @unique
     user_identifier String?
     User            User?    @relation(fields: [userId], references: [id])
     userId          String?
     clicks          Int
-    created_at      DateTime
+    created_at      DateTime @default(now())
 
     @@index([userId])
 }
