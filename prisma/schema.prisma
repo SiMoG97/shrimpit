@@ -79,8 +79,9 @@ model Url {
     user_identifier String?
     User            User?    @relation(fields: [userId], references: [id])
     userId          String?
-    clicks          Int
+    clicks          Int      @default(0)
     created_at      DateTime @default(now())
+    title           String?
 
     @@index([userId])
 }

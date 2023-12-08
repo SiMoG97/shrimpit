@@ -4,25 +4,31 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FormType, formSchema } from "@/lib/formSchema";
 import { forwardRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function EditUrlForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    reset,
   } = useForm<FormType>({
     resolver: zodResolver(formSchema),
   });
 
+  console.log("isSubmitting: ", isSubmitting);
   const submitHandler = async (data: FormType) => {
-    console.log(data);
     try {
-      const res = await fetch("/api/shortUrl", {
+      await fetch("/api/shortUrl", {
         method: "POST",
         body: JSON.stringify(data),
       });
+      reset();
+      router.push("/dashboard");
+      router.refresh();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
   return (
@@ -45,7 +51,9 @@ export default function EditUrlForm() {
         errorMessage={errors?.customBackHalf?.message}
         {...register("customBackHalf")}
       />
-      <button>Create one</button>
+      <button disabled={isSubmitting}>
+        {isSubmitting ? "Submitting..." : "Create one"}
+      </button>
     </form>
   );
 }

@@ -26,6 +26,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.3.1",
     "@next/eslint-plugin-next": "^14.0.3",
     "@types/eslint": "^8.44.7",
     "@types/node": "^18.17.0",
