@@ -9,3 +9,9 @@ export const formSchema = z.object({
     .optional(),
 });
 export type FormType = z.infer<typeof formSchema>;
+
+export const deleteBodySchema = z.object({
+  id: z.string().cuid(),
+});
+
+export type DeleteBodyType = z.infer<typeof deleteBodySchema>;

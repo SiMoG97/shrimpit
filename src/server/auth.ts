@@ -73,7 +73,6 @@ export const getServerAuthSession = () => getServerSession(authOptions);
 
 export async function loginIsRequiredServer() {
   const session = await getServerAuthSession();
-  console.log(session);
 
   if (!session) return redirect("/");
 }

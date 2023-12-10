@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FormType, formSchema } from "@/lib/formSchema";
+import { type FormType, formSchema } from "@/lib/zodSchemas";
 import { forwardRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";

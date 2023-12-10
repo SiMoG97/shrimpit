@@ -36,6 +36,7 @@ type ButtonT = {
 export function Button({ urlId, children, ...props }: ButtonT) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
   async function deleteShortUrl(id: string) {
     setIsLoading(true);
     await fetch(`/api/shortUrl`, {

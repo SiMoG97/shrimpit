@@ -1,7 +1,7 @@
-import { formSchema } from "@/lib/formSchema";
+import { deleteBodySchema, formSchema } from "@/lib/zodSchemas";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { type Url } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { nanoid } from "nanoid";
 import { type NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -68,34 +68,29 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const session = await getServerAuthSession();
-  if (!session)
-    return new NextResponse(JSON.stringify({ message: "Not Authorized" }), {
-      status: 401,
+  try {
+    const session = await getServerAuthSession();
+
+    const { id } = deleteBodySchema.parse(await req.json());
+    const user_identifier = req.cookies.get("user_identifier")?.value;
+
+    await db.url.delete({
+      where: {
+        id,
+        userId: session ? session.user.id : null,
+        user_identifier: session ? null : user_identifier ?? null,
+      },
     });
 
-  const { id } = (await req.json()) as Url;
+    return NextResponse.json({ message: `Deleted short url's id: ${id}` });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error);
+      let status = 500;
+      if (error instanceof ZodError) status = 400;
+      else if (error instanceof PrismaClientKnownRequestError) status = 404;
 
-  const urlToDelete = await db.url.findUnique({
-    where: {
-      id: id,
-      userId: session.user.id,
-    },
-  });
-  if (!id || !urlToDelete) {
-    return new NextResponse(
-      JSON.stringify({ message: "Short url not found or invalid request." }),
-      { status: 400 },
-    );
+      return NextResponse.json(error, { status });
+    }
   }
-
-  await db.url.delete({ where: { id: urlToDelete.id } });
-  // return NextResponse.json({
-  //   message: `Deleted short url's id: ${urlToDelete.id}`,
-
-  // });
-  return Response.json({
-    message: `Deleted short url's id: ${urlToDelete.id}`,
-    revalidatePath: true,
-  });
 }
