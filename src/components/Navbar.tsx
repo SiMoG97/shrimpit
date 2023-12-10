@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SignOutButton } from "./Buttons";
+import { SignInOutGoogle } from "./Buttons";
 import { getServerAuthSession } from "@/server/auth";
 
 export default async function Navbar() {
@@ -26,7 +26,9 @@ export default async function Navbar() {
           </Link>
         </li>
         <li>
-          {session ? <SignOutButton /> : <Link href="/login">Log in</Link>}
+          <SignInOutGoogle method={session ? "signout" : "signin"}>
+            {session ? "Sign out" : "Continue with Google"}
+          </SignInOutGoogle>
         </li>
       </ul>
     </nav>

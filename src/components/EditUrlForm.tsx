@@ -5,9 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type FormType, formSchema } from "@/lib/formSchema";
 import { forwardRef } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { type Session } from "next-auth";
 
-export default function EditUrlForm() {
+type EditUrlFormT = {
+  showInputs?: boolean;
+};
+
+export default function EditUrlForm({ showInputs = true }: EditUrlFormT) {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -17,7 +24,6 @@ export default function EditUrlForm() {
     resolver: zodResolver(formSchema),
   });
 
-  console.log("isSubmitting: ", isSubmitting);
   const submitHandler = async (data: FormType) => {
     try {
       await fetch("/api/shortUrl", {
@@ -25,7 +31,10 @@ export default function EditUrlForm() {
         body: JSON.stringify(data),
       });
       reset();
-      router.push("/dashboard");
+      if (showInputs) {
+        router.push("/dashboard");
+      }
+
       router.refresh();
     } catch (e) {
       console.error(e);
@@ -39,18 +48,22 @@ export default function EditUrlForm() {
         errorMessage={errors?.destination?.message}
         {...register("destination")}
       />
-      <CustomInput
-        id="title"
-        labelText="Title (optional)"
-        errorMessage={errors?.title?.message}
-        {...register("title")}
-      />
-      <CustomInput
-        id="customBackHalf"
-        labelText="Custom back-half (optional)"
-        errorMessage={errors?.customBackHalf?.message}
-        {...register("customBackHalf")}
-      />
+      {showInputs && (
+        <>
+          <CustomInput
+            id="title"
+            labelText="Title (optional)"
+            errorMessage={errors?.title?.message}
+            {...register("title")}
+          />
+          <CustomInput
+            id="customBackHalf"
+            labelText="Custom back-half (optional)"
+            errorMessage={errors?.customBackHalf?.message}
+            {...register("customBackHalf")}
+          />
+        </>
+      )}
       <button disabled={isSubmitting}>
         {isSubmitting ? "Submitting..." : "Create one"}
       </button>

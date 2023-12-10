@@ -75,12 +75,12 @@ export async function loginIsRequiredServer() {
   const session = await getServerAuthSession();
   console.log(session);
 
-  if (!session) return redirect("/login");
+  if (!session) return redirect("/");
 }
 export function loginIsRequiredClient() {
   if (typeof window !== "undefined") {
     const session = useSession();
     const router = useRouter();
-    if (!session) router.push("/login");
+    if (!session) router.push("/");
   }
 }

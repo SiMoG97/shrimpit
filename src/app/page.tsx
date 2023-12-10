@@ -1,3 +1,4 @@
+import EditUrlForm from "@/components/EditUrlForm";
 import FormServer from "@/components/FormServer";
 import { formSchema } from "@/lib/formSchema";
 import { getServerAuthSession } from "@/server/auth";
@@ -23,7 +24,8 @@ export default async function HomePage() {
   return (
     <div>
       {/* <HomeForm /> */}
-      <FormServer />
+      {/* <FormServer /> */}
+      <EditUrlForm showInputs={false} />
       <div>
         <ul>
           {urls.map((url) => (
