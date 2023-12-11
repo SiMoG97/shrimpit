@@ -36,8 +36,8 @@ export default async function HomePage() {
               <div>
                 {url.original_url}{" "}
                 <Link
-                  href={`${env.NEXTAUTH_URL}/${url.short_url_key}`}
-                >{`${env.NEXTAUTH_URL}/${url.short_url_key}`}</Link>{" "}
+                  href={`${env.CLIENT_URL}/${url.short_url_key}`}
+                >{`${env.CLIENT_URL}/${url.short_url_key}`}</Link>{" "}
                 {url.clicks}
               </div>
               <Button urlId={url.id}>Delete</Button>

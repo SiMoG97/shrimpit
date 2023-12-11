@@ -29,8 +29,8 @@ export default async function Dashboard() {
               <div>{original_url}</div>
               <div>
                 <Link
-                  href={`${env.NEXTAUTH_URL}/${short_url_key}`}
-                >{`${env.NEXTAUTH_URL}/${short_url_key}`}</Link>
+                  href={`${env.CLIENT_URL}/${short_url_key}`}
+                >{`${env.CLIENT_URL}/${short_url_key}`}</Link>
               </div>
               <div>{clicks}</div>
               <Link
