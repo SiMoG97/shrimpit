@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const formSchema = z.object({
+export const postFormSchema = z.object({
   destination: z.string().url(),
   title: z.string().optional(),
   customBackHalf: z
@@ -8,7 +8,13 @@ export const formSchema = z.object({
     .max(16, { message: "Custom back-half is too long." })
     .optional(),
 });
-export type FormType = z.infer<typeof formSchema>;
+export type PostFormType = z.infer<typeof postFormSchema>;
+
+export const putFormSchema = postFormSchema.extend({
+  id: z.string().cuid(),
+  destination: z.string().url().optional(),
+});
+export type PutFormType = z.infer<typeof putFormSchema>;
 
 export const deleteBodySchema = z.object({
   id: z.string().cuid(),

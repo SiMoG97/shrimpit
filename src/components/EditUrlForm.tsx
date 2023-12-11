@@ -1,45 +1,84 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { type FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FormType, formSchema } from "@/lib/zodSchemas";
+import {
+  postFormSchema,
+  type PutFormType,
+  type PostFormType,
+  putFormSchema,
+} from "@/lib/zodSchemas";
 import { forwardRef } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { type Session } from "next-auth";
+// import { useSession } from "next-auth/react";
+// import { type Session } from "next-auth";
+import { useSearchParams } from "next/navigation";
 
 type EditUrlFormT = {
   showInputs?: boolean;
+  method?: "POST" | "PUT";
 };
 
-export default function EditUrlForm({ showInputs = true }: EditUrlFormT) {
+export default function EditUrlForm({
+  showInputs = true,
+  method = "POST",
+}: EditUrlFormT) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<FormType>({
-    resolver: zodResolver(formSchema),
+  } = useForm<PostFormType | PutFormType>({
+    defaultValues: {
+      id: searchParams.get("id") ?? undefined,
+      destination: searchParams.get("destination") ?? undefined,
+      title: searchParams.get("title") ?? undefined,
+      customBackHalf: searchParams.get("customBackHalf") ?? undefined,
+    },
+    resolver: zodResolver(method === "POST" ? postFormSchema : putFormSchema),
   });
 
-  const submitHandler = async (data: FormType) => {
+  const submitHandler = async (data: PostFormType | PutFormType) => {
     try {
-      await fetch("/api/shortUrl", {
-        method: "POST",
+      const res = await fetch("/api/shortUrl", {
+        method: method,
         body: JSON.stringify(data),
       });
+      if (!res.ok && res.status == 409) {
+        throw new Error("Custom back-half already taken");
+      }
+      if (!res.ok) throw new Error(await res.text());
+
       reset();
       if (showInputs) {
         router.push("/dashboard");
       }
 
       router.refresh();
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
+      if (!(error instanceof Error)) return;
+
+      setError(
+        "customBackHalf",
+        {
+          type: "coflictBackHalf",
+          message: error.message,
+        },
+        { shouldFocus: true },
+      );
     }
   };
+  // const errorHandler = (errors: FieldErrors<FormType>) => {
+  //   console.log("from error handler");
+  //   console.log(errors);
+  // };
+
+  // console.log(errors);
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
       <CustomInput
@@ -64,10 +103,28 @@ export default function EditUrlForm({ showInputs = true }: EditUrlFormT) {
           />
         </>
       )}
-      <button disabled={isSubmitting}>
-        {isSubmitting ? "Submitting..." : "Create one"}
-      </button>
+      <SubmitButton isSubmitting={isSubmitting} method={method} />
     </form>
+  );
+}
+
+type SubmitBtnT = {
+  isSubmitting: boolean;
+  method?: "POST" | "PUT";
+};
+function SubmitButton({ isSubmitting, method }: SubmitBtnT) {
+  if (method === "PUT") {
+    return (
+      <button disabled={isSubmitting}>
+        {isSubmitting ? "Updating..." : "Update"}
+      </button>
+    );
+  }
+
+  return (
+    <button disabled={isSubmitting}>
+      {isSubmitting ? "Submitting..." : "Create one"}
+    </button>
   );
 }
 

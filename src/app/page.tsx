@@ -1,10 +1,12 @@
 import { Button } from "@/components/Buttons";
 import EditUrlForm from "@/components/EditUrlForm";
 import FormServer from "@/components/FormServer";
-import { formSchema } from "@/lib/zodSchemas";
+import { env } from "@/env";
+import { postFormSchema } from "@/lib/zodSchemas";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 // import HomeForm from "@/components/HomeForm";
 
@@ -32,7 +34,11 @@ export default async function HomePage() {
           {urls.map((url) => (
             <li key={url.id}>
               <div>
-                {url.original_url} {url.short_url_key} {url.clicks}
+                {url.original_url}{" "}
+                <Link
+                  href={`${env.NEXTAUTH_URL}/${url.short_url_key}`}
+                >{`${env.NEXTAUTH_URL}/${url.short_url_key}`}</Link>{" "}
+                {url.clicks}
               </div>
               <Button urlId={url.id}>Delete</Button>
             </li>

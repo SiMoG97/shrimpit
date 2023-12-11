@@ -1,9 +1,7 @@
-// "use client";
+import EditUrlForm from "@/components/EditUrlForm";
+import { loginIsRequiredServer } from "@/server/auth";
 
-// import { useSession } from "next-auth/react";
-
-export default function Update() {
-  // const session = useSession();
-  // console.log(session);
-  return <main>Update</main>;
+export default async function Update() {
+  await loginIsRequiredServer();
+  return <EditUrlForm method="PUT" />;
 }
