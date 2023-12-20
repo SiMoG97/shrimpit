@@ -21,7 +21,7 @@ export default function FormServer() {
       data: {
         clicks: 0,
         user_identifier,
-        short_url_key: nanoid(8),
+        short_url_key: nanoid(6),
         original_url: formData.get("original_url") as string,
       },
     });

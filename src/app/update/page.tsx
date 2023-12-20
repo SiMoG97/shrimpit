@@ -3,5 +3,5 @@ import { loginIsRequiredServer } from "@/server/auth";
 
 export default async function Update() {
   await loginIsRequiredServer();
-  return <EditUrlForm method="PUT" />;
+  return <EditUrlForm method="PUT" className="flex-col" />;
 }

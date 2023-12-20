@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     );
 
     // Creates the shortUrl id
-    const short_url_key = customBackHalf ?? nanoid(8);
-
+    const short_url_key = customBackHalf ?? nanoid(6);
+    console.log(short_url_key);
     // Checks if the request is from a logged in user
     // if so, save the new shortUrl with the user
     if (session) {
@@ -107,7 +107,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // check if customBackHalf is nullable fallback to nanoid
-    const short_url_key = !!customBackHalf ? customBackHalf : nanoid(8);
+    const short_url_key = !!customBackHalf ? customBackHalf : nanoid(6);
 
     const updatedUrl = await db.url.update({
       where: { id, userId: session.user.id },

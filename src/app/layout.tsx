@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 
-import { Inter } from "next/font/google";
+import { Inter, Balsamiq_Sans } from "next/font/google";
 import MainContainer from "@/components/MainContainer";
 // import { SessionProvider } from "next-auth/react";
 // import AuthProvider from "@/components/AuthProvider";
@@ -9,6 +9,12 @@ import MainContainer from "@/components/MainContainer";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const balsamiq = Balsamiq_Sans({
+  weight: ["400", "700"],
+  variable: "--balsamiq-sans",
+  subsets: ["latin"],
 });
 
 export const metadata = {
@@ -24,11 +30,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
-        {/* <AuthProvider> */}
-        <Navbar />
-        <MainContainer>{children}</MainContainer>
-        {/* </AuthProvider> */}
+      <body className={`font-sans  ${balsamiq.variable}`}>
+        <div>
+          <Navbar />
+          <div className="container mx-auto">
+            <MainContainer>{children}</MainContainer>
+          </div>
+        </div>
       </body>
     </html>
   );

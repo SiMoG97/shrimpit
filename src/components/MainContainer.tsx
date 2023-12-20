@@ -4,5 +4,5 @@ type PropsT = {
   children: ReactNode;
 };
 export default function MainContainer({ children }: PropsT) {
-  return <main className="container mx-auto bg-slate-300">{children}</main>;
+  return <main className="mx-auto w-full max-w-3xl px-5 py-5">{children}</main>;
 }

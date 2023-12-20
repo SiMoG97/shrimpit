@@ -8,20 +8,23 @@ import {
   type PostFormType,
   putFormSchema,
 } from "@/lib/zodSchemas";
-import { forwardRef } from "react";
+import { type ComponentProps, forwardRef } from "react";
 import { useRouter } from "next/navigation";
 // import { useSession } from "next-auth/react";
 // import { type Session } from "next-auth";
 import { useSearchParams } from "next/navigation";
+import CustomInput from "./CustomInput";
+import CustomButton from "./CustomButton";
 
 type EditUrlFormT = {
   showInputs?: boolean;
   method?: "POST" | "PUT";
-};
+} & ComponentProps<"form">;
 
 export default function EditUrlForm({
   showInputs = true,
   method = "POST",
+  className,
 }: EditUrlFormT) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,86 +76,52 @@ export default function EditUrlForm({
       );
     }
   };
-  // const errorHandler = (errors: FieldErrors<FormType>) => {
-  //   console.log("from error handler");
-  //   console.log(errors);
-  // };
 
-  // console.log(errors);
-  return (
-    <form onSubmit={handleSubmit(submitHandler)}>
-      <CustomInput
-        id="destination"
-        labelText="Destination"
-        errorMessage={errors?.destination?.message}
-        {...register("destination")}
-      />
-      {showInputs && (
-        <>
-          <CustomInput
-            id="title"
-            labelText="Title (optional)"
-            errorMessage={errors?.title?.message}
-            {...register("title")}
-          />
-          <CustomInput
-            id="customBackHalf"
-            labelText="Custom back-half (optional)"
-            errorMessage={errors?.customBackHalf?.message}
-            {...register("customBackHalf")}
-          />
-        </>
-      )}
-      <SubmitButton isSubmitting={isSubmitting} method={method} />
-    </form>
-  );
-}
-
-type SubmitBtnT = {
-  isSubmitting: boolean;
-  method?: "POST" | "PUT";
-};
-function SubmitButton({ isSubmitting, method }: SubmitBtnT) {
-  if (method === "PUT") {
-    return (
-      <button disabled={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Update"}
-      </button>
-    );
-  }
-
-  return (
-    <button disabled={isSubmitting}>
-      {isSubmitting ? "Submitting..." : "Create one"}
-    </button>
-  );
-}
-
-type InputProps = {
-  id: string;
-  labelText: string;
-  placeholder?: string;
-  errorMessage?: string;
-};
-
-const CustomInput = forwardRef<HTMLInputElement, InputProps>(function (
-  { id, labelText, placeholder, errorMessage, ...rest },
-  ref,
-) {
   return (
     <div>
-      <label htmlFor={id}>{labelText}</label>
-      <input
-        type="text"
-        id={id}
-        ref={ref}
-        placeholder={placeholder}
-        className="border-2 border-solid border-black"
-        {...rest}
-      />
-      {errorMessage && <p>{errorMessage}</p>}
+      <form
+        className={`flex items-start gap-5 
+        
+         ${className}`}
+        onSubmit={handleSubmit(submitHandler)}
+      >
+        <CustomInput
+          id="destination"
+          labelText={showInputs ? "Destination" : undefined}
+          placeholder="https://www.exemple.com/"
+          errorMessage={errors?.destination?.message}
+          {...register("destination")}
+        />
+        {showInputs && (
+          <>
+            <CustomInput
+              id="title"
+              labelText="Title (optional)"
+              errorMessage={errors?.title?.message}
+              {...register("title")}
+            />
+            <CustomInput
+              id="customBackHalf"
+              labelText="Custom back-half (optional)"
+              errorMessage={errors?.customBackHalf?.message}
+              {...register("customBackHalf")}
+            />
+          </>
+        )}
+        <CustomButton
+          disabled={isSubmitting}
+          className={`${showInputs ? "mt-6 self-end" : ""}`}
+        >
+          {updateButtonState(method, isSubmitting)}
+        </CustomButton>
+        {/* </div> */}
+      </form>
     </div>
   );
-});
+}
 
-CustomInput.displayName = "CustomInput";
+function updateButtonState(method: "POST" | "PUT", isSubmitting: boolean) {
+  if (method === "PUT") return isSubmitting ? "Updating..." : "Update";
+
+  return isSubmitting ? "Shrimping..." : "New Shrimp";
+}
