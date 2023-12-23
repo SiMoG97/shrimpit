@@ -40,14 +40,15 @@ export default async function Dashboard() {
             return (
               <li
                 key={id}
-                className="flex justify-between gap-4 border-4 border-black p-3 "
+                className="flex flex-col justify-between gap-4 border-4 border-black p-3 sm:flex-row"
               >
                 <div>
-                  <div className="text-2xl">Title: {title}</div>
+                  <div className="truncate text-2xl">Title: {title}</div>
                   <div className="flex items-center gap-3">
                     <Link
                       target="_blank"
                       href={`${env.CLIENT_URL}/${short_url_key}`}
+                      className="truncate"
                     >{`${env.HOST}/${short_url_key}`}</Link>
                     <CopyButton
                       textToCopy={shortUrl}
@@ -62,7 +63,7 @@ export default async function Dashboard() {
                       />
                     </CopyButton>
                   </div>
-                  <div>{original_url}</div>
+                  <div className="truncate">{original_url}</div>
                   <div className="mt-3 flex gap-5 text-xs">
                     <div>
                       {clicks} {pluralOrNot(clicks, "click")}
@@ -73,7 +74,7 @@ export default async function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex shrink-0 gap-3">
                   <Link
                     className="flex items-center hover:opacity-70 active:scale-95 active:opacity-50"
                     title="Edit Url"

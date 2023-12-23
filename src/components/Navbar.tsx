@@ -20,13 +20,13 @@ export default async function Navbar() {
         <ul className="flex gap-4">
           {session ? (
             <>
-              <li>{session.user.name}</li>
-              <li>
+              <li className="hidden sm:block">{session.user.name}</li>
+              <li className="hidden sm:block">
                 <Link href="/dashboard">Dashboard</Link>
               </li>
             </>
           ) : (
-            <li>
+            <li className="hidden sm:block">
               <Link href="/">Home</Link>
             </li>
           )}

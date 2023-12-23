@@ -1,15 +1,8 @@
 import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 
-import { Inter, Balsamiq_Sans } from "next/font/google";
+import { Balsamiq_Sans } from "next/font/google";
 import MainContainer from "@/components/MainContainer";
-// import { SessionProvider } from "next-auth/react";
-// import AuthProvider from "@/components/AuthProvider";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
 
 const balsamiq = Balsamiq_Sans({
   weight: ["400", "700"],

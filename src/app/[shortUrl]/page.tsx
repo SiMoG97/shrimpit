@@ -1,6 +1,5 @@
 import { getValidUrl } from "@/lib/zodSchemas";
 import { db } from "@/server/db";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 type ShortUrlT = {

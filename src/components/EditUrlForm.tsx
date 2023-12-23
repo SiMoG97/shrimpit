@@ -1,6 +1,6 @@
 "use client";
 
-import { type FieldErrors, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   postFormSchema,
@@ -8,10 +8,8 @@ import {
   type PostFormType,
   putFormSchema,
 } from "@/lib/zodSchemas";
-import { type ComponentProps, forwardRef } from "react";
+import { type ComponentProps } from "react";
 import { useRouter } from "next/navigation";
-// import { useSession } from "next-auth/react";
-// import { type Session } from "next-auth";
 import { useSearchParams } from "next/navigation";
 import CustomInput from "./CustomInput";
 import CustomButton from "./CustomButton";
