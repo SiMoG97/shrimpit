@@ -1,3 +1,4 @@
+import { getValidUrl } from "@/lib/zodSchemas";
 import { db } from "@/server/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -22,6 +23,8 @@ export default async function page({ params }: ShortUrlT) {
     console.log(e);
     return <h2>url not found</h2>;
   } finally {
-    if (urlFromDb) redirect(urlFromDb.original_url);
+    if (urlFromDb) {
+      redirect(getValidUrl(urlFromDb.original_url));
+    }
   }
 }

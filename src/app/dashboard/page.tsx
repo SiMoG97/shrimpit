@@ -1,12 +1,12 @@
-import { DeleteButton } from "@/components/Buttons";
-import QrCodeComp from "@/components/QrCodeComp";
+import { CopyButton, DeleteButton } from "@/components/Buttons";
 import { env } from "@/env";
 import { getServerAuthSession, loginIsRequiredServer } from "@/server/auth";
 import { db } from "@/server/db";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
 import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
+import { pluralOrNot } from "@/lib/helpers";
+import DownloadQR from "@/components/QrCodeComp";
+import Image from "next/image";
 
 export default async function Dashboard() {
   await loginIsRequiredServer();
@@ -16,53 +16,113 @@ export default async function Dashboard() {
       userId: session?.user.id,
     },
   });
-  // revalidateTag("shortUrl");
 
   return (
     <div>
-      <div className="flex justify-between">
-        <div>Dashboard</div>
-        <CustomButton>
-          <Link href="/create">Shrimp Url</Link>
-        </CustomButton>
+      <div className="mb-9 mt-5 flex items-center justify-between">
+        <div className="text-3xl font-medium">Links</div>
+        <Link href="/create">
+          <CustomButton>Shrimp Url</CustomButton>
+        </Link>
       </div>
       <div>
-        <ul>
-          {urls.map(({ id, original_url, title, short_url_key, clicks }) => (
-            <li key={id} className="flex gap-4">
-              <div>{title}</div>
-              <div>{original_url}</div>
-              <div>
-                <Link
-                  href={`${env.CLIENT_URL}/${short_url_key}`}
-                >{`${env.HOST}/${short_url_key}`}</Link>
-              </div>
-              <div>{clicks}</div>
-              <Link
-                href={{
-                  pathname: "/update",
-                  query: {
-                    id,
-                    destination: original_url,
-                    title,
-                    customBackHalf: short_url_key,
-                  },
-                }}
+        <ul className="flex flex-col gap-4">
+          {urls.map((url) => {
+            const {
+              id,
+              clicks,
+              created_at,
+              original_url,
+              title,
+              short_url_key,
+            } = url;
+            const shortUrl = `${env.CLIENT_URL}/${short_url_key}`;
+            return (
+              <li
+                key={id}
+                className="flex justify-between gap-4 border-4 border-black p-3 "
               >
-                Edit
-              </Link>
-              <QrCodeComp shortUrl={`${env.CLIENT_URL}/${short_url_key}`} />
-              {/* <QRCodeSVG
-                value={`${env.CLIENT_URL}/${short_url_key}`}
-                size={256}
-              /> */}
-              {/* <QRCodeCanvas
-                value={`${env.CLIENT_URL}/${short_url_key}`}
-                size={256}
-              /> */}
-              <DeleteButton urlId={id}>Delete</DeleteButton>
-            </li>
-          ))}
+                <div>
+                  <div className="text-2xl">Title: {title}</div>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      target="_blank"
+                      href={`${env.CLIENT_URL}/${short_url_key}`}
+                    >{`${env.HOST}/${short_url_key}`}</Link>
+                    <CopyButton
+                      textToCopy={shortUrl}
+                      className="hover:opacity-70 active:scale-95 active:opacity-50"
+                    >
+                      <Image
+                        src="/copyIcon.svg"
+                        className="hover:path- h-auto w-5"
+                        width="0"
+                        height="0"
+                        alt="copy Icon"
+                      />
+                    </CopyButton>
+                  </div>
+                  <div>{original_url}</div>
+                  <div className="mt-3 flex gap-5 text-xs">
+                    <div>
+                      {clicks} {pluralOrNot(clicks, "click")}
+                    </div>
+                    <div>
+                      {created_at.getDate()}/{created_at.getMonth() + 1}/
+                      {created_at.getUTCFullYear()}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Link
+                    className="flex items-center hover:opacity-70 active:scale-95 active:opacity-50"
+                    title="Edit Url"
+                    href={{
+                      pathname: "/update",
+                      query: {
+                        id,
+                        destination: original_url,
+                        title,
+                        customBackHalf: short_url_key,
+                      },
+                    }}
+                  >
+                    <Image
+                      src="/penIcon.svg"
+                      className=" h-auto w-5"
+                      width="0"
+                      height="0"
+                      alt="Pen to edit Url Icon"
+                    />
+                  </Link>
+                  <DownloadQR
+                    shortUrl={shortUrl}
+                    className="block hover:opacity-70 active:scale-95 active:opacity-50"
+                  >
+                    <Image
+                      src="/qrIcon.svg"
+                      className="h-auto w-5"
+                      width="0"
+                      height="0"
+                      alt="QR Icon"
+                    />
+                  </DownloadQR>
+                  <DeleteButton
+                    urlId={url.id}
+                    className="block hover:opacity-70 active:scale-95 active:opacity-50"
+                  >
+                    <Image
+                      src="/crossIcon.svg"
+                      width={0}
+                      height={0}
+                      className="h-auto w-5 cursor-pointer"
+                      alt="Cross Icon"
+                    />
+                  </DeleteButton>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

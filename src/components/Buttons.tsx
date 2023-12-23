@@ -2,7 +2,7 @@
 
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, type ReactNode, type ComponentProps } from "react";
+import { useState, type ReactNode, type ComponentProps, useRef } from "react";
 
 type SignInOutType = {
   method: "signin" | "signout";
@@ -29,17 +29,49 @@ export function SignInOutGoogle({
   );
 }
 
-type ButtonT = {
+type CopyBtnT = {
+  textToCopy: string;
+} & ComponentProps<"button">;
+
+export function CopyButton({ textToCopy, children, ...props }: CopyBtnT) {
+  const popupRef = useRef<HTMLDivElement>(null);
+  const showPopupHandler = () => {
+    if (!popupRef.current) return;
+    popupRef.current.style.opacity = "1";
+
+    setTimeout(() => {
+      if (!popupRef.current) return;
+      popupRef.current.style.opacity = "0";
+    }, 2000);
+  };
+  return (
+    <>
+      <button
+        title="Copy Short Url"
+        onClick={async () => {
+          await navigator.clipboard.writeText(textToCopy);
+          showPopupHandler();
+        }}
+        {...props}
+      >
+        {children}
+      </button>
+      <div
+        ref={popupRef}
+        className="pointer-events-none fixed bottom-5 left-[50%] translate-x-[-50%] border-4 border-green-500 bg-white px-4 py-2 opacity-0 transition-opacity"
+      >
+        copied
+      </div>
+    </>
+  );
+}
+
+type DeleteBtnT = {
   urlId: string;
   children: ReactNode;
 } & ComponentProps<"button">;
 
-export function DeleteButton({
-  urlId,
-  className,
-  children,
-  ...props
-}: ButtonT) {
+export function DeleteButton({ urlId, children, ...props }: DeleteBtnT) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,13 +88,13 @@ export function DeleteButton({
   }
   return (
     <button
-      className={`${className}`}
+      // className={`${className}`}
       onClick={() => deleteShortUrl(urlId)}
       disabled={isLoading}
+      title="Delete Short Url"
       {...props}
     >
       {isLoading ? <SpinningCircle /> : children}
-      {/* {isLoading ? <SpinningCircle /> : <SpinningCircle />} */}
     </button>
   );
 }
@@ -72,7 +104,7 @@ function SpinningCircle() {
     <div role="status">
       <svg
         aria-hidden="true"
-        className="inline h-6 w-6 animate-spin fill-gray-200 text-gray-200 dark:text-black"
+        className="inline h-5 w-5 animate-spin fill-gray-200 text-gray-200 dark:text-black"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

@@ -40,13 +40,6 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // async signIn({ account, profile }) {
-    //   if (account.provider === "google") {
-    //     console.log("chi 7aja hna ");
-    //     return profile.email_verified && profile.email.endsWith("@example.com");
-    //   }
-    //   return true; // Do different verification for other providers that don't have `email_verified`
-    // },
     session: ({ session, user }) => ({
       ...session,
       user: {

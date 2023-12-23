@@ -21,8 +21,9 @@ export async function POST(req: NextRequest) {
     );
 
     // Creates the shortUrl id
-    const short_url_key = customBackHalf ?? nanoid(6);
-    console.log(short_url_key);
+    // const short_url_key = customBackHalf || nanoid(6);
+    const short_url_key = !!customBackHalf ? customBackHalf : nanoid(6);
+
     // Checks if the request is from a logged in user
     // if so, save the new shortUrl with the user
     if (session) {
