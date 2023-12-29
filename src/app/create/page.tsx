@@ -3,5 +3,10 @@ import { loginIsRequiredServer } from "@/server/auth";
 
 export default async function Create() {
   await loginIsRequiredServer();
-  return <EditUrlForm className="flex-col" />;
+  return (
+    <>
+      <title>Create new short Url - Shrimpit</title>
+      <EditUrlForm className="flex-col" />;
+    </>
+  );
 }

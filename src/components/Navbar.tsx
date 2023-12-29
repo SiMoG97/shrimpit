@@ -22,18 +22,20 @@ export default async function Navbar() {
         <ul className="flex gap-4">
           {session ? (
             <>
-              <li className="hidden sm:block">{session.user.name}</li>
-              <li className="hidden sm:block">
+              <li className="sm:bl800 hidden hover:text-gray-500 active:text-gray-400">
+                {session.user.name}
+              </li>
+              <li className="sm:bl800 hidden hover:text-gray-500 active:text-gray-400">
                 <Link href="/dashboard">Dashboard</Link>
               </li>
             </>
           ) : null}
-          <li>
+          <li className=" hover:text-gray-500 active:text-gray-400">
             <Link href="https://github.com/SiMoG97/shrimpit" target="_blank">
               Source
             </Link>
           </li>
-          <li>
+          <li className=" hover:text-gray-500 active:text-gray-400">
             <SignInOutGoogle method={session ? "signout" : "signin"}>
               {session ? "Sign out" : "Continue with Google"}
             </SignInOutGoogle>
